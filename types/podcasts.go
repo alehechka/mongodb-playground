@@ -24,6 +24,12 @@ func (t *Tags) ParseTags(rawTags string) {
 
 type Podcasts []Podcast
 
+func (p *Podcasts) Init() {
+	if *p == nil {
+		*p = make(Podcasts, 0)
+	}
+}
+
 type PodcastsResponse struct {
 	Podcasts Podcasts `json:"podcasts"`
 }

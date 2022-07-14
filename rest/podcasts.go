@@ -26,12 +26,15 @@ func getPodcasts(c *gin.Context) {
 }
 
 func getPodcast(c *gin.Context) {
-	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}
 
-	podcast, err := database.FindPodcast(types.Podcast{ID: id})
+	podcast, err := database.FindPodcast(types.Podcast{ID: podcastID})
+	if ginshared.ShouldAbortWithError(c)(http.StatusNotFound, err) {
+		return
+	}
 
 	c.JSON(http.StatusOK, types.PodcastResponse{Podcast: podcast})
 }
@@ -42,21 +45,17 @@ func createPodcast(c *gin.Context) {
 		return
 	}
 
-	id, err := database.InsertPodcast(podcast)
+	podcastID, err := database.InsertPodcast(podcast)
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}
 
-	created, err := database.FindPodcast(types.Podcast{ID: id})
-	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
-		return
-	}
-
-	c.JSON(http.StatusCreated, types.PodcastResponse{Podcast: created})
+	c.Params = append(c.Params, gin.Param{Key: "podcastID", Value: podcastID.Hex()})
+	getPodcast(c)
 }
 
 func replacePodcast(c *gin.Context) {
-	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}
@@ -66,7 +65,7 @@ func replacePodcast(c *gin.Context) {
 		return
 	}
 
-	err = database.ReplacePodcast(id, podcast)
+	err = database.ReplacePodcast(podcastID, podcast)
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}
@@ -75,12 +74,12 @@ func replacePodcast(c *gin.Context) {
 }
 
 func deletePodcast(c *gin.Context) {
-	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}
 
-	err = database.DeletePodcast(id)
+	err = database.DeletePodcast(podcastID)
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
 		return
 	}

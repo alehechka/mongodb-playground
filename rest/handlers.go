@@ -17,9 +17,21 @@ func SetupRouter() *gin.Engine {
 func RegisterHandlers(engine *gin.Engine) {
 	router := engine.Group("/api")
 
-	router.GET("/podcasts", getPodcasts)
-	router.GET("/podcasts/:id", getPodcast)
-	router.POST("/podcasts/", createPodcast)
-	router.PUT("/podcasts/:id", replacePodcast)
-	router.DELETE("/podcasts/:id", deletePodcast)
+	{
+		podcasts := router.Group("/podcasts")
+		podcasts.GET("", getPodcasts)
+		podcasts.GET("/:podcastID", getPodcast)
+		podcasts.POST("", createPodcast)
+		podcasts.PUT("/:podcastID", replacePodcast)
+		podcasts.DELETE("/:podcastID", deletePodcast)
+
+		{
+			episodes := podcasts.Group("/:podcastID/episodes")
+			episodes.GET("", getPodcastEpisodes)
+			episodes.GET("/:episodeID", getPodcastEpisode)
+			episodes.POST("", createPodcastEpisode)
+			episodes.PUT("/:episodeID", replacePodcastEpisode)
+			episodes.DELETE("/:episodeID", deletePodcastEpisode)
+		}
+	}
 }
