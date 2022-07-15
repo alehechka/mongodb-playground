@@ -1,0 +1,7 @@
+secrets/
+.gitignore
+Dockerfiile
+docker-compose.yaml
+Dockerfile.local
+gin-bin
+*.exe

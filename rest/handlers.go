@@ -16,6 +16,7 @@ func SetupRouter() *gin.Engine {
 
 func RegisterHandlers(engine *gin.Engine) {
 	router := engine.Group("/api")
+	router.GET("")
 
 	{
 		podcasts := router.Group("/podcasts")
