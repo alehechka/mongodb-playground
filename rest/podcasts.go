@@ -3,8 +3,8 @@ package rest
 import (
 	"net/http"
 
+	"github.com/alehechka/go-utils/ginshared"
 	"github.com/alehechka/mongodb-playground/database"
-	"github.com/alehechka/mongodb-playground/ginshared"
 	"github.com/alehechka/mongodb-playground/types"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"

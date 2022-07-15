@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/alehechka/mongodb-playground/ginshared"
+	"github.com/alehechka/go-utils/ginshared"
 	"github.com/gin-gonic/gin"
 )
 

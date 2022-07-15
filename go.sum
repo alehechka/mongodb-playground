@@ -1,3 +1,5 @@
+github.com/alehechka/go-utils v0.0.0-20220715183713-491933546af3 h1:3PnkANee7Go7C+f1dch693KXXEj7Nueh7XZ2ILNLKiM=
+github.com/alehechka/go-utils v0.0.0-20220715183713-491933546af3/go.mod h1:ICZm+xq32oIDG/lBDZeprEVD51nP0jIq1DDyceoJAxo=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
