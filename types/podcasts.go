@@ -8,10 +8,11 @@ import (
 
 // Podcast is the type representing a podcast
 type Podcast struct {
-	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	Title  string             `json:"title,omitempty" bson:"t,omitempty"`
-	Author string             `json:"author,omitempty" bson:"a,omitempty"`
-	Tags   Tags               `json:"tags,omitempty" bson:"ts,omitempty"`
+	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Title    string             `json:"title,omitempty" bson:"t,omitempty"`
+	Author   string             `json:"author,omitempty" bson:"a,omitempty"`
+	Tags     Tags               `json:"tags,omitempty" bson:"g,omitempty"`
+	Episodes Episodes           `json:"episodes,omitempty" bson:"-"`
 }
 
 type Tags []string

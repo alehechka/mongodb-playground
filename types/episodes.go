@@ -8,7 +8,7 @@ type Episode struct {
 	PodcastID   primitive.ObjectID `json:"podcastID,omitempty" bson:"p,omitempty"`
 	Title       string             `json:"title,omitempty" bson:"t,omitempty"`
 	Description string             `json:"description,omitempty" bson:"d,omitempty"`
-	Duration    int32              `json:"duration,omitempty" bson:"du,omitempty"`
+	Duration    int32              `json:"duration,omitempty" bson:"u,omitempty"`
 }
 
 type Episodes []Episode

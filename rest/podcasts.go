@@ -31,7 +31,13 @@ func getPodcast(c *gin.Context) {
 		return
 	}
 
-	podcast, err := database.FindPodcast(types.Podcast{ID: podcastID})
+	var podcast types.Podcast
+	if ginshared.GetIncludedParams(c).IsIncluded("episodes") {
+		podcast, err = database.GetPodcastWithEpisodes(podcastID)
+	} else {
+		podcast, err = database.FindPodcast(types.Podcast{ID: podcastID})
+	}
+
 	if ginshared.ShouldAbortWithError(c)(http.StatusNotFound, err) {
 		return
 	}
