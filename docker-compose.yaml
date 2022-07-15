@@ -13,7 +13,7 @@ services:
     build:
       dockerfile: Dockerfile.local
     container_name: server
-    command: gin run main.go
+    command: gin -i run main.go
     depends_on:
       - mongo
     ports:
