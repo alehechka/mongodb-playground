@@ -1,6 +1,8 @@
 package database
 
 import (
+	"sync"
+
 	"github.com/alehechka/mongodb-playground/types"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -37,6 +39,37 @@ func FindPodcast(find types.Podcast) (podcast types.Podcast, err error) {
 	}
 
 	err = res.Decode(&podcast)
+	return
+}
+
+// GetPodcastWithEpisodes retrieves a single podcast with all episodes included
+func GetPodcastWithEpisodes(podcastID primitive.ObjectID) (podcast types.Podcast, err error) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var pErr error
+	go func() {
+		podcast, pErr = FindPodcast(types.Podcast{ID: podcastID})
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var episodes types.Episodes
+	var eErr error
+	go func() {
+		episodes, eErr = FindPodcastEpisodes(podcastID, types.Episode{})
+		wg.Done()
+	}()
+
+	wg.Wait()
+	if pErr != nil {
+		return types.Podcast{}, pErr
+	}
+	if eErr != nil {
+		return types.Podcast{}, eErr
+	}
+
+	podcast.Episodes = episodes
 	return
 }
 
