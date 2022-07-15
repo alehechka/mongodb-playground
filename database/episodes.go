@@ -7,6 +7,11 @@ import (
 
 // InsertPodcastEpisode inserts a single episode record into the episode collection
 func InsertPodcastEpisode(podcastID primitive.ObjectID, episode types.Episode) (primitive.ObjectID, error) {
+	_, err := FindPodcast(types.Podcast{ID: podcastID})
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+
 	episode.ID = primitive.NewObjectID()
 	episode.PodcastID = podcastID
 
