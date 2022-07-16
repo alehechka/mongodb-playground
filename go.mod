@@ -3,14 +3,14 @@ module github.com/alehechka/mongodb-playground
 go 1.18
 
 require (
-	github.com/gin-contrib/cors v1.4.0
+	github.com/alehechka/go-utils v0.0.0-20220715183713-491933546af3
 	github.com/gin-gonic/gin v1.8.1
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.10.0
 )
 
 require (
-	github.com/alehechka/go-utils v0.0.0-20220715183713-491933546af3 // indirect
+	github.com/gin-contrib/cors v1.4.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
