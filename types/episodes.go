@@ -1,6 +1,13 @@
 package types
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"fmt"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.opentelemetry.io/otel/attribute"
+)
+
+const EpisodeID string = "episodeID"
 
 // Episode is the type representing a podcast episode
 type Episode struct {
@@ -8,7 +15,20 @@ type Episode struct {
 	PodcastID   primitive.ObjectID `json:"podcastID,omitempty" bson:"p,omitempty"`
 	Title       string             `json:"title,omitempty" bson:"t,omitempty"`
 	Description string             `json:"description,omitempty" bson:"d,omitempty"`
-	Duration    int32              `json:"duration,omitempty" bson:"u,omitempty"`
+	Duration    int                `json:"duration,omitempty" bson:"u,omitempty"`
+}
+
+func (e Episode) String() string {
+	return fmt.Sprintf("%#v", e)
+}
+
+func (e Episode) Attributes() (attrs []attribute.KeyValue) {
+	attrs = append(attrs, attribute.String("id", e.ID.Hex()))
+	attrs = append(attrs, attribute.String("title", e.Title))
+	attrs = append(attrs, attribute.String("description", e.Description))
+	attrs = append(attrs, attribute.Int("duration", int(e.Duration)))
+
+	return
 }
 
 type Episodes []Episode
