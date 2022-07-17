@@ -20,5 +20,9 @@ services:
       - 3000:3000
     environment:
       MONGODB_CONNECTION_STRING: mongodb://root:example@mongo:27017/
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'grpc://api.honeycomb.io:443'
+      OTEL_SERVICE_NAME: mongodb-playground-api
+    env_file:
+      - secrets/.env
     volumes:
       - .:/app
