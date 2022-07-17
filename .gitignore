@@ -17,3 +17,4 @@ gin-bin
 # vendor/
 
 secrets/
+opentel/out/
