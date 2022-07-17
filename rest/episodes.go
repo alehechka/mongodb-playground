@@ -5,24 +5,33 @@ import (
 
 	"github.com/alehechka/go-utils/ginshared"
 	"github.com/alehechka/mongodb-playground/database"
+	"github.com/alehechka/mongodb-playground/opentel"
 	"github.com/alehechka/mongodb-playground/types"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func getPodcastEpisodes(c *gin.Context) {
-	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
+	ctx, span := opentel.GinTracer.Start(c.Request.Context(), "getPodcastEpisodes")
+	defer span.End()
+
+	podcastID, err := primitive.ObjectIDFromHex(c.Param(types.PodcastID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.PodcastID, podcastID.Hex()))
 
-	findEpisode := types.Episode{
+	filterEpisode := types.Episode{
 		Title:       c.Query("filter[title]"),
 		Description: c.Query("filter[description]"),
 	}
+	span.SetAttributes(attribute.String("filterEpisode", filterEpisode.String()))
 
-	episodes, err := database.FindPodcastEpisodes(podcastID, findEpisode)
+	episodes, err := database.FindPodcastEpisodes(ctx, podcastID, filterEpisode)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
+		span.RecordError(err)
 		return
 	}
 
@@ -30,18 +39,26 @@ func getPodcastEpisodes(c *gin.Context) {
 }
 
 func getPodcastEpisode(c *gin.Context) {
-	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
+	ctx, span := opentel.GinTracer.Start(c.Request.Context(), "getPodcastEpisode")
+	defer span.End()
+
+	podcastID, err := primitive.ObjectIDFromHex(c.Param(types.PodcastID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.PodcastID, podcastID.Hex()))
 
-	episodeID, err := primitive.ObjectIDFromHex(c.Param("episodeID"))
+	episodeID, err := primitive.ObjectIDFromHex(c.Param(types.EpisodeID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.EpisodeID, episodeID.Hex()))
 
-	episode, err := database.FindPodcastEpisode(podcastID, types.Episode{ID: episodeID})
+	episode, err := database.FindPodcastEpisode(ctx, podcastID, types.Episode{ID: episodeID})
 	if ginshared.ShouldAbortWithError(c)(http.StatusNotFound, err) {
+		span.RecordError(err)
 		return
 	}
 
@@ -49,43 +66,61 @@ func getPodcastEpisode(c *gin.Context) {
 }
 
 func createPodcastEpisode(c *gin.Context) {
-	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
+	ctx, span := opentel.GinTracer.Start(c.Request.Context(), "createPodcastEpisode")
+	defer span.End()
+
+	podcastID, err := primitive.ObjectIDFromHex(c.Param(types.PodcastID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.PodcastID, podcastID.Hex()))
 
 	var episode types.Episode
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, c.ShouldBind(&episode)) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(episode.Attributes()...)
 
-	episodeID, err := database.InsertPodcastEpisode(podcastID, episode)
+	episodeID, err := database.InsertPodcastEpisode(ctx, podcastID, episode)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
+		span.RecordError(err)
 		return
 	}
 
-	c.Params = append(c.Params, gin.Param{Key: "episodeID", Value: episodeID.Hex()})
+	c.Params = append(c.Params, gin.Param{Key: types.EpisodeID, Value: episodeID.Hex()})
 	getPodcastEpisode(c)
 }
 
 func replacePodcastEpisode(c *gin.Context) {
-	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
-	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
-		return
-	}
+	ctx, span := opentel.GinTracer.Start(c.Request.Context(), "replacePodcastEpisode")
+	defer span.End()
 
-	episodeID, err := primitive.ObjectIDFromHex(c.Param("episodeID"))
+	podcastID, err := primitive.ObjectIDFromHex(c.Param(types.PodcastID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.PodcastID, podcastID.Hex()))
+
+	episodeID, err := primitive.ObjectIDFromHex(c.Param(types.EpisodeID))
+	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
+		return
+	}
+	span.SetAttributes(attribute.String(types.EpisodeID, episodeID.Hex()))
 
 	var episode types.Episode
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, c.ShouldBind(&episode)) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(episode.Attributes()...)
 
-	err = database.ReplacePodcastEpisode(podcastID, episodeID, episode)
+	err = database.ReplacePodcastEpisode(ctx, podcastID, episodeID, episode)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
+		span.RecordError(err)
 		return
 	}
 
@@ -93,18 +128,26 @@ func replacePodcastEpisode(c *gin.Context) {
 }
 
 func deletePodcastEpisode(c *gin.Context) {
-	podcastID, err := primitive.ObjectIDFromHex(c.Param("podcastID"))
+	ctx, span := opentel.GinTracer.Start(c.Request.Context(), "deletePodcastEpisode")
+	defer span.End()
+
+	podcastID, err := primitive.ObjectIDFromHex(c.Param(types.PodcastID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.PodcastID, podcastID.Hex()))
 
-	episodeID, err := primitive.ObjectIDFromHex(c.Param("episodeID"))
+	episodeID, err := primitive.ObjectIDFromHex(c.Param(types.EpisodeID))
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
+		span.RecordError(err)
 		return
 	}
+	span.SetAttributes(attribute.String(types.EpisodeID, episodeID.Hex()))
 
-	err = database.DeletePodcastEpisode(podcastID, episodeID)
+	err = database.DeletePodcastEpisode(ctx, podcastID, episodeID)
 	if ginshared.ShouldAbortWithError(c)(http.StatusNotFound, err) {
+		span.RecordError(err)
 		return
 	}
 
