@@ -22,7 +22,7 @@ func getPodcasts(c *gin.Context) {
 	}
 	filterPodcast.Tags.ParseTags(c.Query("filter[tags]"))
 
-	span.SetAttributes(filterPodcast.Attributes()...)
+	span.SetAttributes(attribute.String("filterPodcast", filterPodcast.String()))
 
 	podcasts, err := database.FindPodcasts(ctx, filterPodcast)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
@@ -71,7 +71,7 @@ func createPodcast(c *gin.Context) {
 		span.RecordError(err)
 		return
 	}
-	span.SetAttributes(podcast.Attributes()...)
+	span.SetAttributes(attribute.String("podcast", podcast.String()))
 
 	podcastID, err := database.InsertPodcast(ctx, podcast)
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {
@@ -100,7 +100,7 @@ func replacePodcast(c *gin.Context) {
 		span.RecordError(err)
 		return
 	}
-	span.SetAttributes(podcast.Attributes()...)
+	span.SetAttributes(attribute.String("podcast", podcast.String()))
 
 	err = database.ReplacePodcast(ctx, podcastID, podcast)
 	if ginshared.ShouldAbortWithError(c)(http.StatusBadRequest, err) {

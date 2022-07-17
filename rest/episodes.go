@@ -81,7 +81,7 @@ func createPodcastEpisode(c *gin.Context) {
 		span.RecordError(err)
 		return
 	}
-	span.SetAttributes(episode.Attributes()...)
+	span.SetAttributes(attribute.String("episode", episode.String()))
 
 	episodeID, err := database.InsertPodcastEpisode(ctx, podcastID, episode)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {
@@ -116,7 +116,7 @@ func replacePodcastEpisode(c *gin.Context) {
 		span.RecordError(err)
 		return
 	}
-	span.SetAttributes(episode.Attributes()...)
+	span.SetAttributes(attribute.String("episode", episode.String()))
 
 	err = database.ReplacePodcastEpisode(ctx, podcastID, episodeID, episode)
 	if ginshared.ShouldAbortWithError(c)(http.StatusInternalServerError, err) {

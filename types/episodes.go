@@ -1,10 +1,9 @@
 package types
 
 import (
-	"fmt"
+	"encoding/json"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.opentelemetry.io/otel/attribute"
 )
 
 const EpisodeID string = "episodeID"
@@ -19,16 +18,8 @@ type Episode struct {
 }
 
 func (e Episode) String() string {
-	return fmt.Sprintf("%#v", e)
-}
-
-func (e Episode) Attributes() (attrs []attribute.KeyValue) {
-	attrs = append(attrs, attribute.String("id", e.ID.Hex()))
-	attrs = append(attrs, attribute.String("title", e.Title))
-	attrs = append(attrs, attribute.String("description", e.Description))
-	attrs = append(attrs, attribute.Int("duration", int(e.Duration)))
-
-	return
+	b, _ := json.Marshal(e)
+	return string(b)
 }
 
 type Episodes []Episode

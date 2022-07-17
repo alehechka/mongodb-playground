@@ -1,11 +1,10 @@
 package types
 
 import (
-	"fmt"
+	"encoding/json"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.opentelemetry.io/otel/attribute"
 )
 
 const PodcastID string = "podcastID"
@@ -40,16 +39,8 @@ func (p *Podcasts) Init() {
 }
 
 func (p Podcast) String() string {
-	return fmt.Sprintf("%#v", p)
-}
-
-func (p Podcast) Attributes() (attrs []attribute.KeyValue) {
-	attrs = append(attrs, attribute.String("id", p.ID.Hex()))
-	attrs = append(attrs, attribute.String("title", p.Title))
-	attrs = append(attrs, attribute.String("author", p.Author))
-	attrs = append(attrs, attribute.String("tags", p.Tags.String()))
-
-	return
+	b, _ := json.Marshal(p)
+	return string(b)
 }
 
 type PodcastsResponse struct {
