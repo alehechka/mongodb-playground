@@ -11,7 +11,8 @@ RUN go mod download
 COPY . .
 
 ENV CGO_ENABLED=0
-ENV GOOS=linux
+ENV GOOS=${TARGETOS}
+ENV GOARCH=${TARGETARCH}
 
 RUN go build main.go
 
