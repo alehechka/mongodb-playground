@@ -1,6 +1,6 @@
 # BUILD SERVER
 
-FROM golang:1.18-alpine as go-builder
+FROM --platform=$BUILDPLATFORM golang:1.18-alpine as go-builder
 
 WORKDIR /app
 COPY go.mod ./
@@ -11,10 +11,9 @@ RUN go mod download
 COPY . .
 
 ENV CGO_ENABLED=0
-ENV GOOS=${TARGETOS}
-ENV GOARCH=${TARGETARCH}
+ARG TARGETOS TARGETARCH
 
-RUN go build main.go
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build main.go
 
 # SERVE
 
